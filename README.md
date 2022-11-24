@@ -4,10 +4,6 @@
 
 Dataset credits: [Kaggle](https://www.kaggle.com/datasets/imdevskp/corona-virus-report?resource=download&select=country_wise_latest.csv)
 
-## Some questions about the data
-
-- How the confirmed cases are related with deaths and recovered cases
-
 ## Kepler generated maps
 
 Thanks to [kepler.gl](https://kepler.gl/demo) I made some geodata visualizations
