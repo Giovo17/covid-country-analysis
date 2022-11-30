@@ -34,41 +34,56 @@ df = df[!(df$Deaths...100.Recovered=="Inf" ),]
 
 ## MULTIVARIATE EDA
 
-library(ellipse)
-library(RColorBrewer)
-
-# Build a Pannel of 100 colors with Rcolor Brewer
-my_colors <- brewer.pal(5, "Spectral")
-my_colors <- colorRampPalette(my_colors)(100)
-
-# Order the correlation matrix
-plotcorr(cor(df[2:14]) , col=my_colors[df*50+50] , mar=c(1,1,1,1)  )
-
-heatmap(cor(df[2:14]))
-
 library(reshape2)
-melted_cormat <- melt(cormat)
+melted_cormat <- melt(cor(df[2:14]))
 head(melted_cormat)
-x <- LETTERS[1:20]
-y <- paste0("var", seq(1,20))
-ggplot(cor(df[2:14]), aes(X, Y)) + 
+
+
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
   geom_tile()
 
 
 
+## DIMENSIONALITY REDUCTION
+
+df_num = df[2:14]
+
+df_scaled = scale(df_num)
+
+corr_mat = cor(df_scaled)
+eig = eigen(corr_mat)
+
+PVE = eig$values/sum(eig$values)
+PVE
+
+cumsum(PVE)
+
+
+df_pca = prcomp(df_scaled)
+
+# compute total variance
+variance = df_pca$sdev^2 / sum(df_pca$sdev^2)
+
+# Scree plot
+qplot(c(1:13), variance) +
+  geom_line() +
+  geom_point(size=4)+
+  xlab("Principal Component") +
+  ylab("Variance Explained") +
+  ggtitle("Scree Plot") +
+  ylim(0, 1)
 
 
 
 
+## LINEAR REGRESSION
 
-
-## Linear regression
-
-lm(formula = Deaths ~ Confirmed + Recovered + Active + New.cases + New.deaths + 
+linear_model = lm(formula = Deaths ~ Confirmed + Recovered + Active + New.cases + New.deaths + 
                       New.recovered + Deaths...100.Cases + Recovered...100.Cases + 
                       Deaths...100.Recovered + Confirmed.last.week + X1.week.change +
                       X1.week...increase, data=df)
 
+summary(linear_model)
 
 
 
